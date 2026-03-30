@@ -5,6 +5,7 @@ The crontab is set up on the Turing workstation using the system crontab. This i
 - Setoff_workflows via Automated Scripts
 - Workstation Heartbeat
 - Low Disk Space Warning
+- OKD SFTP Downloading
 ---
 Edit crontab using: sudo nano /etc/crontab
 

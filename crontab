@@ -26,5 +26,11 @@ SHELL=/bin/bash
 5,25,45 * * * * mokaguys cd /usr/local/src/mokaguys/apps/automate_demultiplex/ && python3 -m setoff_workflows > /usr/local/src/mokaguys/automate_demultiplexing_logfiles/Setoff_workflows_cron_stdout/$(date "+\%Y\%m\%d_\%H\%M\%S").txt 2>&1; status=$?; if [ $status -ne 0 ]; then echo "Setoff_workflows script failed to complete " $(date "+\%y\%m\%d_\%H\%M\%S")|/usr/bin/logger -t setoff_workflows_script_fail; else echo "Successful completion of setoff_workflows script " $(date "+\%y\%m\%d_\%H\%M\%S")|/usr/bin/logger -t setoff_workflows_script_success; fi
 # Workstation heartbeat
 */20 * * * *    root    echo 'padam padam' 2>&1 | /usr/bin/logger -t Heartbeat
+# Testing adding additional heartbeat to mitigate Rapid7 reload issue
+1,21,41 * * * * root    echo 'padam padam' 2>&1 | /usr/bin/logger -t Heartbeat
 # Low diskspace warning
 0 * * * *    root    FREE=$(df /media/data1/share --output=avail | tail -n 1); FREEHR=$(df /media/data1/share --output=avail -h | tail -n 1); if [ "$FREE" -lt 838860371 ]; then echo "Less than 800GB available on /media/data1/share: $FREEHR" | /usr/bin/logger -t turing_freespace; fi
+# Low /usr space  warning
+0 * * * *    root    FREE_usr=$(df /dev/nvme1n1p1 --output=avail | tail -n 1); FREEHR_usr=$(df /dev/nvme1n1p1 --output=avail -h | tail -n 1); if [ "$FREE_usr" -lt 26214400 ]; then echo "Less than 25GB available on /dev/nvme1n1p1: $FREEHR_usr. Please clear space from /usr" | /usr/bin/logger -t turing_usr_freespace; fi
+# OncoDNA SFTP Download
+*/20 * * * * mokaguys cd /usr/local/src/mokaguys/apps/crontab_oncodeep_sftp_download/ && bash okd_sftp_download.sh 

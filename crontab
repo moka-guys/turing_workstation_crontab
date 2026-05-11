@@ -1,4 +1,4 @@
-# /etc/crontab: system-wide crontab
+ /etc/crontab: system-wide crontab
 # Unlike any other crontab you don't have to run the `crontab'
 # command to install the new version when you edit this file
 # and files in /etc/cron.d. These files also have username fields,
@@ -16,15 +16,23 @@ SHELL=/bin/bash
 # |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat
 # |  |  |  |  |
 # *  *  *  *  * user-name command to be executed
-17 *	* * *	root    cd / && run-parts --report /etc/cron.hourly
-25 6	* * *	root	test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.daily )
-47 6	* * 7	root	test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.weekly )
-52 6	1 * *	root	test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.monthly )
+17 *    * * *   root    cd / && run-parts --report /etc/cron.hourly
+25 6    * * *   root    test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.daily )
+47 6    * * 7   root    test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.weekly )
+52 6    1 * *   root    test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.monthly )
 # Demux
-0,20,40 * * * * mokaguys cd /usr/local/src/mokaguys/apps/automate_demultiplex/ && python3 -m demultiplex > /usr/local/src/mokaguys/automate_demultiplexing_logfiles/Demultiplex_cron_stdout/$(date "+\%Y\%m\%d_\%H\%M\%S").txt 2>&1; status=$?; if [ $status -ne 0 ]; then echo "demultiplex script failed to complete " $(date "+\%y\%m\%d_\%H\%M\%S")|/usr/bin/logger -t demultiplex_script_fail; else echo "Successful completion of demultiplex script " $(date "+\%y\%m\%d_\%H\%M\%S")|/usr/bin/logger -t demultiplex_script_pass; fi
+0,20,40 * * * * mokaguys cd /usr/local/src/mokaguys/apps/automate_demultiplex/ && python3 -m demultiplex > /usr/local/src/mokaguys/automate_demultiplexing_logfiles/Demultiplex_cron_stdout/$(date "+\%Y\%m\%d_\%H\%M\%S").txt 2>&1; status=$?; if [ $status -ne 0 ]; then echo "demultiplex script failed to complete " $(date "+\%y\%m\%d_\%H>
 # Setoff_workflows
-5,25,45 * * * * mokaguys cd /usr/local/src/mokaguys/apps/automate_demultiplex/ && python3 -m setoff_workflows > /usr/local/src/mokaguys/automate_demultiplexing_logfiles/Setoff_workflows_cron_stdout/$(date "+\%Y\%m\%d_\%H\%M\%S").txt 2>&1; status=$?; if [ $status -ne 0 ]; then echo "Setoff_workflows script failed to complete " $(date "+\%y\%m\%d_\%H\%M\%S")|/usr/bin/logger -t setoff_workflows_script_fail; else echo "Successful completion of setoff_workflows script " $(date "+\%y\%m\%d_\%H\%M\%S")|/usr/bin/logger -t setoff_workflows_script_success; fi
+5,25,45 * * * * mokaguys cd /usr/local/src/mokaguys/apps/automate_demultiplex/ && python3 -m setoff_workflows > /usr/local/src/mokaguys/automate_demultiplexing_logfiles/Setoff_workflows_cron_stdout/$(date "+\%Y\%m\%d_\%H\%M\%S").txt 2>&1; status=$?; if [ $status -ne 0 ]; then echo "Setoff_workflows script failed to complete " $(date >
 # Workstation heartbeat
 */20 * * * *    root    echo 'padam padam' 2>&1 | /usr/bin/logger -t Heartbeat
+# Testing adding additional heartbeat to mitigate Rapid7 reload issue
+1,21,41 * * * * root    echo 'padam padam' 2>&1 | /usr/bin/logger -t Heartbeat
 # Low diskspace warning
 0 * * * *    root    FREE=$(df /media/data1/share --output=avail | tail -n 1); FREEHR=$(df /media/data1/share --output=avail -h | tail -n 1); if [ "$FREE" -lt 838860371 ]; then echo "Less than 800GB available on /media/data1/share: $FREEHR" | /usr/bin/logger -t turing_freespace; fi
+# Low /usr space  warning
+0 * * * *    root    FREE_usr=$(df /dev/nvme1n1p1 --output=avail | tail -n 1); FREEHR_usr=$(df /dev/nvme1n1p1 --output=avail -h | tail -n 1); if [ "$FREE_usr" -lt 26214400 ]; then echo "Less than 25GB available on /dev/nvme1n1p1: $FREEHR_usr. Please clear space from /usr" | /usr/bin/logger -t turing_usr_freespace; fi
+# OncoDNA SFTP Download
+#*/20 * * * * mokaguys cd /usr/local/src/mokaguys/development_area/okd_sftp_download/ && bash okd_sftp_download.sh
+# Check for CSV files directly within /media/data1/share to prevent silent fails
+*/5 * * * * root if find /media/data1/share/ -maxdepth 1 -type f -name "*.csv" | grep -q .; then echo "CSV file detected in /media/data1/share/" | /usr/bin/logger -t silent_fail_csv_check; fi

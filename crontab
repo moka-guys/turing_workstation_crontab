@@ -27,7 +27,7 @@ SHELL=/bin/bash
 # Workstation heartbeat
 */20 * * * *    root    echo 'padam padam' 2>&1 | /usr/bin/logger -t Heartbeat
 # Check available diskspace
-0 12 * * 6    root   FREEHR=$(df -h /media/data1/share --output=avail | tail -n 1);  OLD_FOLDERS=$(find /media/data1/share /media/data1/share/AV250605 /media/data1/share/AV241501 -mindepth 1 -maxdepth 1 -type d -name '[0-9][0-9][0-9][0-9][0-9][0-9]*' -mtime +14); echo -e "$FREEHR available on media/data1/share.\nRunfolders >2 weeks old can be deleted:\n$OLD_FOLDERS" | /usr/bin/logger -t turing_freespace
+0 12 * * 5    root   FREEHR=$(df -h /media/data1/share --output=avail | tail -n 1);  OLD_FOLDERS=$(find /media/data1/share /media/data1/share/AV250605 /media/data1/share/AV241501 -mindepth 1 -maxdepth 1 -type d -name '[0-9][0-9][0-9][0-9][0-9][0-9]*' -mtime +14); echo -e "$FREEHR available on media/data1/share.\nRunfolders >2 weeks old can be deleted:\n$OLD_FOLDERS" | /usr/bin/logger -t turing_freespace
 FOLDERS"echo "
 # Low diskspace warning
-0 * * * *    root    FREE=$(df /media/data1/share --output=avail | tail -n 1); FREEHR=$(df /media/data1/share --output=avail -h | tail -n 1); if [ "$FREE" -lt 838860371 ]; then echo "Less than 800GB available on /media/data1/share: $FREEHR" | /usr/bin/logger -t turing_freespace; fi
+0 * * * *    root    FREE=$(df /media/data1/share --output=avail | tail -n 1); FREEHR=$(df /media/data1/share --output=avail -h | tail -n 1); if [ "$FREE" -lt 1048576000 ]; then echo "Less than 800GB available on /media/data1/share: $FREEHR" | /usr/bin/logger -t turing_freespace; fi

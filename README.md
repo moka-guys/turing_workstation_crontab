@@ -4,7 +4,10 @@ The crontab is set up on the Turing workstation using the system crontab. This i
 - Demultiplexing via Automated Scripts
 - Setoff_workflows via Automated Scripts
 - Workstation Heartbeat
+- Additional Workstation Heartbeat for Rapid7 reload mitigation
 - Low Disk Space Warning
+- Low /usr Space Warning
+- CSV Silent Fail Check
 ---
 Edit crontab using: sudo nano /etc/crontab
 

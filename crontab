@@ -28,8 +28,6 @@ SHELL=/bin/bash
 */20 * * * *    root    echo 'padam padam' 2>&1 | /usr/bin/logger -t Heartbeat
 # Testing adding additional heartbeat to mitigate Rapid7 reload issue
 1,21,41 * * * * root    echo 'padam padam' 2>&1 | /usr/bin/logger -t Heartbeat
-# Low diskspace warning
-0 * * * *    root    FREE=$(df /media/data1/share --output=avail | tail -n 1); FREEHR=$(df /media/data1/share --output=avail -h | tail -n 1); if [ "$FREE" -lt 838860371 ]; then echo "Less than 800GB available on /media/data1/share: $FREEHR" | /usr/bin/logger -t turing_freespace; fi
 # Low /usr space  warning
 0 * * * *    root    FREE_usr=$(df /dev/nvme1n1p1 --output=avail | tail -n 1); FREEHR_usr=$(df /dev/nvme1n1p1 --output=avail -h | tail -n 1); if [ "$FREE_usr" -lt 26214400 ]; then echo "Less than 25GB available on /dev/nvme1n1p1: $FREEHR_usr. Please clear space from /usr" | /usr/bin/logger -t turing_usr_freespace; fi
 # OncoDNA SFTP Download
